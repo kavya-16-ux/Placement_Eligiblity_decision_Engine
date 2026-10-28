@@ -6,7 +6,7 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        // Read candidate data in sequence
+        // Read input
         System.out.println("Enter the name of student:");
         String name = scanner.next();
         System.out.println("Enter the percentage:");
@@ -16,11 +16,19 @@ public class Main {
         System.out.println("Enter the graduation year:");
         int graduationYear = scanner.nextInt();
 
-        // Display read values
-        System.out.println("Candidate: " + name);
-        System.out.println("Percentage: " + percentage);
-        System.out.println("Backlogs: " + backlogs);
-        System.out.println("Graduation Year: " + graduationYear);
+        // Create the Candidate object
+        Candidate candidate = new Candidate(
+                name,
+                percentage,
+                backlogs,
+                graduationYear
+        );
+
+        // Print values using getter methods
+        System.out.println("Candidate: " + candidate.getName());
+        System.out.println("Percentage: " + candidate.getPercentage());
+        System.out.println("Backlogs: " + candidate.getBacklogs());
+        System.out.println("Graduation Year: " + candidate.getGraduationYear());
 
         scanner.close();
     }
