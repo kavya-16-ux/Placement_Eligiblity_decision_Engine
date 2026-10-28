@@ -6,7 +6,6 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        // 1. Read candidate inputs
         System.out.println("Enter the name of student:");
         String name = scanner.next();
         System.out.println("Enter the percentage:");
@@ -16,7 +15,6 @@ public class Main {
         System.out.println("Enter the graduation year:");
         int graduationYear = scanner.nextInt();
 
-        // 2. Instantiate Candidate object
         Candidate candidate = new Candidate(
                 name,
                 percentage,
@@ -24,7 +22,6 @@ public class Main {
                 graduationYear
         );
 
-        // 3. Instantiate Job object
         Job job = new Job(
                 "Infosys",
                 "Java Developer",
@@ -33,21 +30,12 @@ public class Main {
                 2026
         );
 
-        // 4. Rule evaluations
-        boolean percentagePass
-                = candidate.getPercentage() >= job.getMinimumPercentage();
+        EligibilityRule[] rules = {
+            new PercentageRule(),
+            new BacklogRule(),
+            new GraduationYearRule()
+        };
 
-        boolean backlogPass
-                = candidate.getBacklogs() <= job.getMaximumBacklogs();
-
-        boolean yearPass
-                = candidate.getGraduationYear() == job.getRequiredGraduationYear();
-
-        // 5. Combined decision
-        boolean eligible
-                = percentagePass && backlogPass && yearPass;
-
-        // 6. Formatted output
         System.out.println("================================");
         System.out.println("PLACEMENT ELIGIBILITY RESULT");
         System.out.println("================================");
@@ -58,22 +46,17 @@ public class Main {
         System.out.println("Role      : " + job.getRole());
         System.out.println();
 
-        if (percentagePass) {
-            System.out.println("Percentage      : PASS");
-        } else {
-            System.out.println("Percentage      : FAIL");
-        }
+        boolean eligible = true;
 
-        if (backlogPass) {
-            System.out.println("Backlogs        : PASS");
-        } else {
-            System.out.println("Backlogs        : FAIL");
-        }
+        for (int i = 0; i < rules.length; i++) {
+            boolean passed = rules[i].check(candidate, job);
 
-        if (yearPass) {
-            System.out.println("Graduation Year : PASS");
-        } else {
-            System.out.println("Graduation Year : FAIL");
+            if (passed) {
+                System.out.println(rules[i].getRuleName() + " : PASS");
+            } else {
+                System.out.println(rules[i].getRuleName() + " : FAIL");
+                eligible = false;
+            }
         }
 
         System.out.println();
