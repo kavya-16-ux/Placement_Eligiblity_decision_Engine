@@ -1,5 +1,5 @@
-// 1. Scalable Initial Jobs Catalog (Easily add more here)
-let jobCatalog = [
+// 1. Initial Default Company & Job Catalog
+const DEFAULT_JOBS = [
     { id: 1, company: "Infosys", role: "Java Developer", minPct: 65.0, maxBacklogs: 0, reqYear: 2026, skills: ["Java", "SQL"] },
     { id: 2, company: "TCS", role: "Graduate Engineer", minPct: 70.0, maxBacklogs: 1, reqYear: 2026, skills: ["Java", "HTML"] },
     { id: 3, company: "Wipro", role: "Project Engineer", minPct: 60.0, maxBacklogs: 0, reqYear: 2026, skills: ["Java", "Python"] },
@@ -9,7 +9,28 @@ let jobCatalog = [
     { id: 7, company: "Cognizant", role: "Programmer Analyst Trainee", minPct: 65.0, maxBacklogs: 1, reqYear: 2026, skills: ["Java", "MySQL"] }
 ];
 
-// Elements
+// 2. Persistent Storage Sync (Load existing saved jobs or initialize with defaults)
+function loadStoredJobs() {
+    const savedData = localStorage.getItem("placement_jobs_catalog");
+    if (savedData) {
+        try {
+            return JSON.parse(savedData);
+        } catch (e) {
+            console.error("Failed to parse saved jobs, resetting to defaults", e);
+            return [...DEFAULT_JOBS];
+        }
+    }
+    return [...DEFAULT_JOBS];
+}
+
+function persistJobs(jobs) {
+    localStorage.setItem("placement_jobs_catalog", JSON.stringify(jobs));
+}
+
+// Active in-memory catalog synced from storage
+let jobCatalog = loadStoredJobs();
+
+// DOM Element References
 const jobSelect = document.getElementById("targetJob");
 const minPctInput = document.getElementById("minPercentage");
 const maxBacklogsInput = document.getElementById("maxBacklogs");
@@ -21,7 +42,7 @@ const openModalBtn = document.getElementById("openAddJobModalBtn");
 const closeModalBtn = document.getElementById("closeModalBtn");
 const addJobForm = document.getElementById("addJobForm");
 
-// 2. Populate Dropdown dynamically
+// 3. Render Dropdown Options
 function renderJobOptions(selectedId = null) {
     jobSelect.innerHTML = '<option value="">-- Choose a Company & Role --</option>';
 
@@ -36,7 +57,7 @@ function renderJobOptions(selectedId = null) {
     });
 }
 
-// 3. Dropdown Change Handler: Auto-fill criteria boxes
+// 4. Dropdown Change Handler: Auto-fill criteria boxes
 jobSelect.addEventListener("change", (e) => {
     const selectedId = parseInt(e.target.value);
     const job = jobCatalog.find((j) => j.id === selectedId);
@@ -54,14 +75,14 @@ jobSelect.addEventListener("change", (e) => {
     }
 });
 
-// 4. Modal Open/Close Controls
+// 5. Modal Controls
 openModalBtn.addEventListener("click", () => modalOverlay.classList.remove("hidden"));
 closeModalBtn.addEventListener("click", () => modalOverlay.classList.add("hidden"));
 modalOverlay.addEventListener("click", (e) => {
     if (e.target === modalOverlay) modalOverlay.classList.add("hidden");
 });
 
-// 5. Add New Company/Job Form Submission
+// 6. Add New Company/Job: Persist Permanently
 addJobForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
@@ -79,17 +100,24 @@ addJobForm.addEventListener("submit", (e) => {
             .filter((s) => s.length > 0)
     };
 
+    // Add to active catalog
     jobCatalog.push(newJob);
+
+    // Save to localStorage so it survives page reloads
+    persistJobs(jobCatalog);
+
+    // Update dropdown and select the newly created job
     renderJobOptions(newJob.id);
 
-    // Trigger change event to fill the inputs with the newly added job
+    // Trigger change event to populate criteria inputs automatically
     jobSelect.dispatchEvent(new Event("change"));
 
+    // Reset and close modal
     addJobForm.reset();
     modalOverlay.classList.add("hidden");
 });
 
-// 6. Candidate Form Evaluation (Mirrors Java OOP Rule Logic)
+// 7. Candidate Form Evaluation (Mirrors OOP Decision Engine)
 document.getElementById("eligibilityForm").addEventListener("submit", (e) => {
     e.preventDefault();
 
@@ -156,5 +184,5 @@ function updateBadge(id, passed) {
     el.className = `badge ${passed ? "pass" : "fail"}`;
 }
 
-// Initial render of dropdown
+// Initial render from storage
 renderJobOptions();
