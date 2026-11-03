@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Placement Eligibility Engine</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Placement Eligibility Decision Engine</h1>
+            <p>Evaluate candidate qualification against dynamic company criteria</p>
+        </header>
+
+        <main class="grid-layout">
+            <!-- Left: Form Inputs -->
+            <section class="card">
+                <h2>Candidate Details</h2>
+                <form id="eligibilityForm">
+                    <div class="form-group">
+                        <label for="name">Candidate Name</label>
+                        <input type="text" id="name" placeholder="e.g. Rahul" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="percentage">Degree Percentage (%)</label>
+                        <input type="number" id="percentage" step="0.1" min="0" max="100" placeholder="e.g. 78.5"
+                            required />
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="backlogs">Active Backlogs</label>
+                            <input type="number" id="backlogs" min="0" placeholder="e.g. 0" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="gradYear">Graduation Year</label>
+                            <input type="number" id="gradYear" min="2000" max="2035" placeholder="e.g. 2026" required />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="candidateSkills">Candidate Skills (Comma Separated)</label>
+                        <input type="text" id="candidateSkills" placeholder="e.g. Java, SQL, HTML" required />
+                    </div>
+
+                    <div class="section-divider"></div>
+
+                    <div class="job-header-row">
+                        <h2>Job Target</h2>
+                        <button type="button" id="openAddJobModalBtn" class="btn-secondary">+ Add New Company</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="targetJob">Select Position</label>
+                        <select id="targetJob" required>
+                            <option value="">-- Choose a Company & Role --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="minPercentage">Min Percentage (%)</label>
+                            <input type="number" id="minPercentage" step="0.1" placeholder="Min %" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="maxBacklogs">Max Backlogs</label>
+                            <input type="number" id="maxBacklogs" placeholder="Max Backlogs" required />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reqYear">Required Year</label>
+                            <input type="number" id="reqYear" placeholder="Grad Year" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="reqSkills">Required Skills</label>
+                            <input type="text" id="reqSkills" placeholder="e.g. Java, SQL" required />
+                        </div>
+                    </div>
+
+                    <button type="submit" id="evaluateBtn" class="btn-primary">Evaluate Eligibility</button>
+                </form>
+            </section>
+
+            <!-- Right: Results Panel -->
+            <section class="card results-card">
+                <h2>Evaluation Outcome</h2>
+                <div id="placeholderState" class="placeholder">
+                    Fill in candidate details, select a position, and click <strong>Evaluate Eligibility</strong>.
+                </div>
+
+                <div id="resultsContent" class="hidden">
+                    <div class="summary-box">
+                        <div><span class="label">Candidate:</span> <strong id="resName">-</strong></div>
+                        <div><span class="label">Target:</span> <strong id="resJob">-</strong></div>
+                    </div>
+
+                    <div class="rules-list">
+                        <div class="rule-row">
+                            <span>Percentage Criteria</span>
+                            <span id="badgePercentage" class="badge">PASS</span>
+                        </div>
+                        <div class="rule-row">
+                            <span>Backlog Limit</span>
+                            <span id="badgeBacklogs" class="badge">PASS</span>
+                        </div>
+                        <div class="rule-row">
+                            <span>Graduation Year</span>
+                            <span id="badgeYear" class="badge">PASS</span>
+                        </div>
+                        <div class="rule-row">
+                            <span>Required Skills</span>
+                            <span id="badgeSkills" class="badge">PASS</span>
+                        </div>
+                    </div>
+
+                    <div id="finalBanner" class="final-banner pass">FINAL RESULT: ELIGIBLE</div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal for Adding New Company / Job -->
+    <div id="modalOverlay" class="modal-overlay hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Register New Job Opening</h3>
+                <button type="button" id="closeModalBtn" class="btn-close">&times;</button>
+            </div>
+            <form id="addJobForm">
+                <div class="form-group">
+                    <label for="newCompany">Company Name</label>
+                    <input type="text" id="newCompany" placeholder="e.g. Google" required />
+                </div>
+                <div class="form-group">
+                    <label for="newRole">Job Role</label>
+                    <input type="text" id="newRole" placeholder="e.g. Software Engineer" required />
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="newMinPct">Min Percentage (%)</label>
+                        <input type="number" id="newMinPct" step="0.1" placeholder="e.g. 75" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="newMaxBacklogs">Max Backlogs</label>
+                        <input type="number" id="newMaxBacklogs" placeholder="e.g. 0" required />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="newYear">Required Graduation Year</label>
+                        <input type="number" id="newYear" placeholder="e.g. 2026" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="newSkills">Required Skills</label>
+                        <input type="text" id="newSkills" placeholder="e.g. Java, Python, DSA" required />
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary">Save Job to Catalog</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
