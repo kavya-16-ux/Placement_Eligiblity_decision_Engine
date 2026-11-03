@@ -1,26 +1,26 @@
 
 public class Candidate {
 
-    // 1. Private fields (prevent direct external access)
     private String name;
     private double percentage;
     private int backlogs;
     private int graduationYear;
+    private String[] skills;
 
-    // 2. Constructor to initialize all fields
     public Candidate(
             String name,
             double percentage,
             int backlogs,
-            int graduationYear
+            int graduationYear,
+            String[] skills
     ) {
         this.name = name;
         this.percentage = percentage;
         this.backlogs = backlogs;
         this.graduationYear = graduationYear;
+        this.skills = skills;
     }
 
-    // 3. Getter methods for controlled read access
     public String getName() {
         return name;
     }
@@ -35,5 +35,14 @@ public class Candidate {
 
     public int getGraduationYear() {
         return graduationYear;
+    }
+
+    public boolean hasSkill(String requiredSkill) {
+        for (int i = 0; i < skills.length; i++) {
+            if (skills[i].equalsIgnoreCase(requiredSkill)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -7,7 +7,8 @@ public class EligibilityChecker {
         rules = new EligibilityRule[]{
             new PercentageRule(),
             new BacklogRule(),
-            new GraduationYearRule()
+            new GraduationYearRule(),
+            new SkillRule()
         };
     }
 
@@ -18,9 +19,13 @@ public class EligibilityChecker {
             boolean passed = rules[i].check(candidate, job);
 
             if (passed) {
-                System.out.println(rules[i].getRuleName() + " : PASS");
+                System.out.println(
+                        rules[i].getRuleName() + " : PASS"
+                );
             } else {
-                System.out.println(rules[i].getRuleName() + " : FAIL");
+                System.out.println(
+                        rules[i].getRuleName() + " : FAIL"
+                );
                 eligible = false;
             }
         }
